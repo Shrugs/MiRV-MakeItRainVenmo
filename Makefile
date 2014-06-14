@@ -6,7 +6,7 @@ include theos/makefiles/common.mk
 
 TWEAK_NAME = MiRV
 MiRV_FILES = Tweak.xm
-MiRV_FRAMEWORKS = UIKit
+MiRV_FRAMEWORKS = UIKit QuartzCore
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
