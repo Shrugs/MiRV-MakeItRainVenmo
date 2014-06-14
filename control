@@ -1,0 +1,9 @@
+Package: com.shrugs.MiRV
+Name: MiRV
+Depends: mobilesubstrate
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: An awesome MobileSubstrate tweak!
+Maintainer: Matt Condon
+Author: Matt Condon
+Section: Tweaks
