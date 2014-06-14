@@ -111,28 +111,6 @@ static MiRVOverlayView *overlay = nil;
 
         [overlay updateLabels];
 
-        // _emitter = (CAEmitterLayer*)overlay.layer;
-        // _emitter.emitterPosition = CGPointMake(overlay.bounds.size.width, 60);
-        // _emitter.emitterSize = CGSizeMake(10, 10);
-
-        // CAEmitterCell* cell = [CAEmitterCell emitterCell];
-        // cell.birthRate = 200;
-        // cell.lifetime = 3.0;
-        // cell.lifetimeRange = 0.5;
-        // cell.color = [[UIColor colorWithRed:0.8 green:0.4 blue:0.2 alpha:0.1]
-        //   CGColor];
-
-        // cell.velocity = 10;
-        // cell.velocityRange = 20;
-        // cell.emissionRange = M_PI_2;
-
-        // cell.scaleSpeed = 0.3;
-        // cell.spin = 0.5;
-
-        // [cell setName:@"cell"];
-
-        // _emitter.emitterCells = [NSArray arrayWithObject:cell];
-
         [[[UIApplication sharedApplication] keyWindow] addSubview: frosty];
         [[[UIApplication sharedApplication] keyWindow] insertSubview: overlay aboveSubview: frosty];
 
