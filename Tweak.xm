@@ -32,3 +32,17 @@ the generation of a class list and an automatic constructor.
 // Always make sure you clean up after yourself; Not doing so could have grave consequences!
 %end
 */
+
+#import "Venmo/VENPaymentService.h"
+#import "CKBlurView/CKBlurView.h"
+
+%hook VENPaymentService
+
+- (void)sendTransaction {
+    %log;
+    CKBlurView *overlay = [[%c(CKBlurView) alloc] initWithFrame: [[[UIApplication sharedApplication] keyWindow] frame]];
+    [[[UIApplication sharedApplication] keyWindow] addSubview: overlay];
+}
+
+
+%end
