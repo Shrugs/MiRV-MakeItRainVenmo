@@ -94,11 +94,15 @@ static MiRVOverlayView *overlay = nil;
         MiRLabel = [[UILabel alloc] initWithFrame: CGRectMake(0, 30, overlay.bounds.size.width, 30)];
         MiRLabel.textAlignment =  NSTextAlignmentCenter;
         MiRLabel.textColor = [UIColor blackColor];
-        [MiRLabel setText: @"Make it Rain!"];
+        [MiRLabel setText: @"💸Make it Rain!💸"];
+        [MiRLabel setFont:[UIFont systemFontOfSize:30]];
+        MiRLabel.adjustsFontSizeToFitWidth = YES;
         [overlay addSubview: MiRLabel];
         MiRAmount = [[UILabel alloc] initWithFrame: CGRectMake(0, 130, overlay.bounds.size.width, 100)];
         MiRAmount.textAlignment =  NSTextAlignmentCenter;
         MiRAmount.textColor = [UIColor blackColor];
+        [MiRAmount setFont:[UIFont systemFontOfSize:30]];
+        MiRAmount.adjustsFontSizeToFitWidth = YES;
         [overlay addSubview: MiRAmount];
 
         [overlay updateLabels];
