@@ -36,6 +36,7 @@ the generation of a class list and an automatic constructor.
 #import "Venmo/VENPaymentService.h"
 #import "Venmo/VENMakePaymentViewController.h"
 #import "Venmo/VENPaymentView.h"
+#import "Venmo/VENTransactionRecipient.h"
 // #import <iOS7/Frameworks/QuartzCore/CAEmitterLayer.h>
 
 
@@ -47,16 +48,59 @@ static UILabel *MiRAmount = nil;
 static BOOL didMakeItRain = false;
 static unsigned int billsRainedUpon = 0;
 static CKBlurView *frosty = nil;
+static NSString *moneyType = @"dollars";
 // static CAEmitterLayer *_emitter = nil;
 
+@interface MiRVMoneyBag : UIView
+- (void) moveTo:(CGPoint)destination duration:(float)secs;
+- (void) fadeIn;
+- (float) rFloat:(float)m;
+@end
+
+@implementation MiRVMoneyBag
+- (float) rFloat:(float)m {
+    return arc4random() / ((pow(2, 32)-1)) * m;
+}
+-(id)initWithFrame:(CGRect) frame {
+    self = [super initWithFrame: frame];
+    if (self) {
+        UILabel *myLabel = [[UILabel alloc] initWithFrame: CGRectMake(0,0,frame.size.width, frame.size.height)];
+        myLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        myLabel.numberOfLines = 0;
+        myLabel.text = @"💸";
+        self.alpha = 0;
+        [self addSubview:myLabel];
+    }
+    return self;
+}
+- (void) fadeIn {
+    [UIView animateWithDuration:1 delay:[self rFloat:1] options:UIViewAnimationOptionCurveEaseOut
+        animations:^{
+            self.alpha = 1;
+        }
+        completion:nil];
+}
+- (void) moveTo:(CGPoint)destination duration:(float)secs
+{
+    [UIView animateWithDuration:(1+[self rFloat:1]) delay:0.0 options:UIViewAnimationOptionCurveEaseOut
+        animations:^{
+            self.frame = CGRectMake(destination.x,destination.y, self.frame.size.width, self.frame.size.height);
+            self.alpha = 0;
+        }
+        completion:nil];
+}
+@end
 
 @interface MiRVOverlayView : UIView <UIGestureRecognizerDelegate>
 -(void)handleSwipe:(UISwipeGestureRecognizer *)recognizer;
 -(void)updateLabels;
+-(float)rFloat:(float)m;
 @end
 
 @implementation MiRVOverlayView
-
+- (float) rFloat:(float)m {
+    return arc4random() / ((pow(2, 32)-1)) * m;
+}
 -(void)handleSwipe:(UISwipeGestureRecognizer *)recognizer {
     billsRainedUpon ++;
     [self updateLabels];
@@ -67,12 +111,21 @@ static CKBlurView *frosty = nil;
         [venPaymentService sendTransaction];
     }
 
-    // show particles lol
+    // show particle lol
+    MiRVMoneyBag *mb = [[MiRVMoneyBag alloc] initWithFrame: CGRectMake(30 + 52*[self rFloat:5], 60, 40, 40)];
+    [self addSubview:mb];
+    [mb fadeIn];
+    [mb moveTo:CGPointMake(mb.center.x, 300) duration:0];
+
 
 }
 
 -(void)updateLabels {
-    MiRAmount.text = [NSString stringWithFormat: @"~$%i", billsRainedUpon];
+    if ([moneyType isEqualToString:@"dollars"]) {
+        MiRAmount.text = [NSString stringWithFormat: @"~$%i", billsRainedUpon];
+    } else {
+        MiRAmount.text = [NSString stringWithFormat: @"%i¢", billsRainedUpon];
+    }
 }
 
 @end
@@ -98,7 +151,7 @@ static MiRVOverlayView *overlay = nil;
         MiRLabel = [[UILabel alloc] initWithFrame: CGRectMake(0, 30, overlay.bounds.size.width, 30)];
         MiRLabel.textAlignment =  NSTextAlignmentCenter;
         MiRLabel.textColor = [UIColor blackColor];
-        [MiRLabel setText: @"💸Make it Rain!💸"];
+        [MiRLabel setText: [NSString stringWithFormat: @"💸Make it Rain on %@!💸", [(VENTransactionRecipient *)[(NSOrderedSet *)mostRecentPaymentView.recipients firstObject] firstName]]];
         [MiRLabel setFont:[UIFont systemFontOfSize:30]];
         MiRLabel.adjustsFontSizeToFitWidth = YES;
         [overlay addSubview: MiRLabel];
@@ -114,7 +167,16 @@ static MiRVOverlayView *overlay = nil;
         [[[UIApplication sharedApplication] keyWindow] addSubview: frosty];
         [[[UIApplication sharedApplication] keyWindow] insertSubview: overlay aboveSubview: frosty];
 
-        amount = ceil([self amount]/100);
+        NSRange textRange =[[[self note] lowercaseString] rangeOfString:[@"hail" lowercaseString]];
+
+        if(textRange.location != NSNotFound) {
+            amount = [self amount];
+            [MiRLabel setText: [NSString stringWithFormat: @"💸Make it Hail on %@!💸", [(VENTransactionRecipient *)[(NSOrderedSet *)mostRecentPaymentView.recipients firstObject] firstName]]];
+            moneyType = @"cents";
+        } else {
+            amount = ceil([self amount]/100);
+            moneyType = @"dollars";
+        }
     } else {
         [frosty removeFromSuperview];
         [overlay removeFromSuperview];
